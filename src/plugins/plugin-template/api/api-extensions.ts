@@ -13,7 +13,6 @@ export const shopSchema = gql`
   type ExampleList implements PaginatedList {
     items: [Example!]!
     totalItems: Int!
-    totalPrice: Int
   }
 
   extend type Query {

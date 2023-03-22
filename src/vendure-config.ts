@@ -11,6 +11,7 @@ import 'dotenv/config';
 import path from 'path';
 import { CustomerPlugin } from './plugins/customer/customer.plugin';
 import { RestPlugin } from './plugins/rest-api/rest.plugin';
+import { ExamplePlugin } from './plugins/plugin-template';
 
 const IS_DEV = process.env.APP_ENV === 'dev';
 
@@ -93,7 +94,8 @@ export const config: VendureConfig = {
             port: 3002,
         }),
         CustomerPlugin,
-        RestPlugin
+        RestPlugin,
+        ExamplePlugin
 
     ],
 };
