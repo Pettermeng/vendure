@@ -1,4 +1,4 @@
-import { PluginCommonModule, VendurePlugin } from "@vendure/core";
+import { Customer, PluginCommonModule, VendurePlugin } from "@vendure/core";
 import { shopSchema } from "./api/api-extensions";
 import { ExampleResolver } from "./api/example.resolver";
 

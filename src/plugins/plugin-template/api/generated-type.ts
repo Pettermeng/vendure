@@ -30,3 +30,38 @@ export type UpdateExampleInput = {
 export type MutationUpdateExampleArgs = {
     input: UpdateExampleInput;
 };
+
+export type MutationDeleteExampleArgs = {
+  id: Scalars['ID'];
+};
+
+export type SearchExampleArgs = {
+  input: SearchExampleInput;
+};
+    
+export type SearchExampleInput = {
+  id: Scalars['ID']
+  title: Scalars['String'];
+  description: Scalars['String'];
+};
+
+
+//Customer
+export type SubmitCustomerInput = {
+  title: Scalars['String'];
+  phoneNumber: Scalars['String'];
+};
+
+export type MutationSubmitCustomerArgs = {
+  input: RegisterCustomerInput;
+};
+
+
+export declare type RegisterCustomerInput = {
+  emailAddress: Scalars['String'];
+  title: Scalars['String'];
+  firstName: Scalars['String'];
+  lastName: Scalars['String'];
+  phoneNumber: Scalars['String'];
+  password: Scalars['String'];
+};

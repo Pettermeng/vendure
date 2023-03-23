@@ -13,10 +13,11 @@ export const shopSchema = gql`
   type ExampleList implements PaginatedList {
     items: [Example!]!
     totalItems: Int!
+    totalPrice: Int
   }
 
   extend type Query {
-    exampleQuery: ExampleList!
+    exampleQuery(input: SearchExampleInput!): ExampleList!
   }
 
   input ExampleInput {
@@ -30,9 +31,32 @@ export const shopSchema = gql`
     description: String
   }
 
+  input SearchExampleInput {
+    id: ID
+    title: String
+    description: String
+  }
+
+  type ResponseDelete{
+    code: String!
+    message: String
+  }
+
+  input registerCustomerInput {
+    emailAddress: String
+    title: String
+    firstName: String
+    lastName: String
+    phoneNumber: String
+    password: String
+  }
+
+
   extend type Mutation {
     insertExample(input: ExampleInput!): Example!
     updateExample(input: UpdateExampleInput!): Example!
+    deleteExample(id: ID!): ResponseDelete!
+    registerCustomerAccountCustom(input: registerCustomerInput!): String  
   }
 
 `;

@@ -15,3 +15,16 @@ export class Example extends VendureEntity {
       @Column()
       description: string;
 }
+
+
+// //Customer
+// @Entity()
+// export class Customer extends VendureEntity {
+
+//     constructor(input?: DeepPartial<Customer>) {
+//         super(input);
+//     }
+  
+//     @Column()
+//     title: string;
+// }
