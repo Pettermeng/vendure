@@ -1,6 +1,6 @@
 import { Inject} from '@nestjs/common';
 import { Resolver, Query, Mutation, Args} from '@nestjs/graphql';
-import { Permission, Allow, RequestContext, Ctx, Logger, TransactionalConnection,translateDeep, ListQueryBuilder, patchEntity, User, CustomerService } from '@vendure/core';
+import { Permission, Allow, RequestContext, Ctx, Logger, TransactionalConnection,translateDeep, ListQueryBuilder, patchEntity, User, CustomerService, Customer } from '@vendure/core';
 import { loggerCtx, PLUGIN_INIT_OPTIONS } from '../constants';
 import { ExampleOptions } from '../example.plugin';
 import { Example } from '../entity/example.entity';
@@ -85,19 +85,31 @@ export class ExampleResolver {
       @Ctx() ctx: RequestContext,
       @Args() { input }: MutationSubmitCustomerArgs,
     ){
-     // const customer = new Customer(input);
+
       var UserPhone = input.phoneNumber;
-      
-      // if(UserPhone == '012565323') {
-      //   console.log('User Exist');
-      // }
-      // else {
-      //   return this.connection.getRepository(ctx, Customer).save(customer);
-      // }
+      let sql = this.listQueryBuilder
+      .build(Customer);
 
-      this.customerService.registerCustomerAccount(ctx, input);
-
-      return 'Success';
-      // return this.connection.getRepository(ctx, Example).save(example);
+      if(UserPhone){
+        sql.where({
+          phoneNumber:UserPhone
+        }).orWhere({
+          emailAddress:input.emailAddress
+        });
+      }
+      const user_exist = await sql.getCount();
+  
+      if(user_exist > 0) {
+        const code = 409;
+        const message = "User Exist!";
+        // return message;
+        return {code, message}
+      }
+      else {
+        this.customerService.registerCustomerAccount(ctx, input);
+        const code = 200;
+        const message = "User Register";
+        return {code, message};
+      }
   }
 }

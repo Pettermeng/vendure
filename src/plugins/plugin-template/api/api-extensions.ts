@@ -51,12 +51,17 @@ export const shopSchema = gql`
     password: String
   }
 
+  type ResponseRegister{
+    code: String!
+    message: String
+  }
+
 
   extend type Mutation {
     insertExample(input: ExampleInput!): Example!
     updateExample(input: UpdateExampleInput!): Example!
     deleteExample(id: ID!): ResponseDelete!
-    registerCustomerAccountCustom(input: registerCustomerInput!): String  
+    registerCustomerAccountCustom(input: registerCustomerInput!): ResponseRegister!  
   }
 
 `;
