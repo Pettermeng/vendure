@@ -3,7 +3,7 @@ FROM node:16
 WORKDIR /usr/src/app
 
 COPY package.json ./
-COPY yarn.lock ./
-RUN yarn --production
+COPY npm.lock ./
+RUN npm --production
 COPY . .
-RUN yarn build
+RUN npm build

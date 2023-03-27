@@ -1,6 +1,6 @@
 import { Inject} from '@nestjs/common';
 import { Resolver, Query, Mutation, Args} from '@nestjs/graphql';
-import { Permission, Allow, RequestContext, Ctx, Logger, TransactionalConnection,translateDeep, ListQueryBuilder, patchEntity, User, CustomerService, Customer } from '@vendure/core';
+import { Permission, Allow, RequestContext, Ctx, Logger, TransactionalConnection,translateDeep, ListQueryBuilder, patchEntity, User, CustomerService, Customer, UserService, AuthenticationMethod } from '@vendure/core';
 import { loggerCtx, PLUGIN_INIT_OPTIONS } from '../constants';
 import { ExampleOptions } from '../example.plugin';
 import { Example } from '../entity/example.entity';
