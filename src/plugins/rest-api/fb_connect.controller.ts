@@ -13,9 +13,18 @@ export class FacebookController {
 
   @Post()
   async createUser(@Body() createUserDto: CreateUserDto) {
-    // Logger.info('data=' + JSON.stringify(createUserDto.username));
-    const result = await this.catFetcher.sendOtp("85510527675");
-    return result;
+    var access_token = createUserDto.access_token;
+
+    var fbId, name, fName, lName;
+
+    const result = await this.catFetcher.fbAccess(access_token);
+    const response = JSON.parse(JSON.stringify(result));
+    fbId  = response.id;
+    name  = response.name;
+    fName = response.first_name;
+    lName = response.last_name;
+
+    
   }
 
   @Get()

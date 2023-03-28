@@ -52,6 +52,7 @@ export type SubmitCustomerInput = {
   phoneNumber: Scalars['String'];
 };
 
+//Customer Register Custom
 export type MutationSubmitCustomerArgs = {
   input: RegisterCustomerInput;
 };
@@ -63,5 +64,25 @@ export declare type RegisterCustomerInput = {
   firstName: Scalars['String'];
   lastName: Scalars['String'];
   phoneNumber: Scalars['String'];
+  password: Scalars['String'];
+};
+
+
+//Customer Update Custom
+export type MutationUpdateCustomerArgs = {
+  input: UpdateCustomerShopInput;
+};
+
+export declare type UpdateCustomerShopInput = {
+  title: Scalars['String'];
+  firstName: Scalars['String'];
+  lastName: Scalars['String'];
+  phoneNumber: Scalars['String'];
+};
+
+
+//Customer Update Custom
+export declare type MutationLoginArgs = {
+  username: any;
   password: Scalars['String'];
 };

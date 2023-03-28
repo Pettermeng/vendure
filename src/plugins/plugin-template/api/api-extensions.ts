@@ -56,12 +56,32 @@ export const shopSchema = gql`
     message: String
   }
 
+  type ResponseUpdate{
+    code: String!
+    message: String
+  }
+
+  input updateCustomerInput {
+    title: String
+    firstName: String
+    lastName: String
+    phoneNumber: String
+  }
+
+
+  type ResponseFormat{
+    code: String!
+    message: String!
+    token: String
+  }
 
   extend type Mutation {
     insertExample(input: ExampleInput!): Example!
     updateExample(input: UpdateExampleInput!): Example!
     deleteExample(id: ID!): ResponseDelete!
     registerCustomerAccountCustom(input: registerCustomerInput!): ResponseRegister!  
+    updateCustomerAccountCustom(input: updateCustomerInput!): ResponseUpdate!  
+    customLogin(username: String!, password: String!): ResponseFormat!
   }
 
 `;

@@ -1,10 +1,10 @@
 import { Inject} from '@nestjs/common';
 import { Resolver, Query, Mutation, Args} from '@nestjs/graphql';
-import { Permission, Allow, RequestContext, Ctx, Logger, TransactionalConnection,translateDeep, ListQueryBuilder, patchEntity, User, CustomerService, Customer, UserService, AuthenticationMethod } from '@vendure/core';
+import { Permission, Allow, RequestContext, Ctx, Logger, TransactionalConnection,translateDeep, ListQueryBuilder, patchEntity, User, CustomerService, Customer, UserService, AuthenticationMethod, AuthService } from '@vendure/core';
 import { loggerCtx, PLUGIN_INIT_OPTIONS } from '../constants';
 import { ExampleOptions } from '../example.plugin';
 import { Example } from '../entity/example.entity';
-import { MutationDeleteExampleArgs, MutationSubmitCustomerArgs, MutationSubmitExampleArgs, MutationUpdateExampleArgs, SearchExampleArgs } from './generated-type';
+import { MutationDeleteExampleArgs, MutationLoginArgs, MutationSubmitCustomerArgs, MutationSubmitExampleArgs, MutationUpdateCustomerArgs, MutationUpdateExampleArgs, SearchExampleArgs } from './generated-type';
 import { RegisterCustomerInput } from './generated-type'; 
 
 @Resolver()
@@ -13,7 +13,9 @@ export class ExampleResolver {
     constructor(
         private connection: TransactionalConnection,
         private listQueryBuilder: ListQueryBuilder,
-        private customerService: CustomerService
+        private customerService: CustomerService,
+        private authService: AuthService
+
     ){}
 
 
@@ -79,7 +81,7 @@ export class ExampleResolver {
   }
 
 
-  //Customer
+  //Create customer custom account
   @Mutation()
   async registerCustomerAccountCustom(
       @Ctx() ctx: RequestContext,
@@ -90,19 +92,23 @@ export class ExampleResolver {
       let sql = this.listQueryBuilder
       .build(Customer);
 
-      if(UserPhone){
-        sql.where({
-          phoneNumber:UserPhone
-        }).orWhere({
-          emailAddress:input.emailAddress
-        });
-      }
+      //@Check Exist with user phone or email
+      // sql.where({
+      //   phoneNumber:UserPhone
+      // }).orWhere({
+      //   emailAddress:input.emailAddress
+      // });
+
+      //@Check Exist with user email
+      sql.where({
+        emailAddress:input.emailAddress  
+      })
+
       const user_exist = await sql.getCount();
-  
+      
       if(user_exist > 0) {
         const code = 409;
         const message = "User Exist!";
-        // return message;
         return {code, message}
       }
       else {
@@ -112,4 +118,50 @@ export class ExampleResolver {
         return {code, message};
       }
   }
+
+  //Custom user login
+  @Mutation()
+  async customLogin(
+      @Ctx() ctx: RequestContext,
+      @Args() {username, password}: MutationLoginArgs
+    ){
+      
+      var token = "";
+      var code  = "401";
+      var message  = "INVALID_CREDENTIALS_ERROR";
+      var isLogin: any;
+      
+      const sql = this.listQueryBuilder.build(Customer);
+
+      if(isNaN(username)){
+        sql.where({emailAddress: username});
+      }else {
+        sql.where({phoneNumber: username});
+      }
+      
+      const customer = await sql.getOne();
+
+      if(customer){
+        if(customer.user){
+          const userId = customer.user.id ? customer.user.id : "";
+          isLogin = await this.authService.verifyUserPassword(ctx, userId, password);
+          if(isLogin===true){ 
+            var session = await this.authService.createAuthenticatedSessionForUser(ctx, customer.user,"");
+            var ses = JSON.parse(JSON.stringify(session));
+            token = ses.token ? ses.token : '';
+            if(token != '') {
+              code = "200";
+              message = 'Login Successfully';
+            }
+            else {
+              code = "401";
+              message = 'User not verify';
+            }
+          }
+        }
+      }
+      return {code, message, token};
+  }
+
+
 }
