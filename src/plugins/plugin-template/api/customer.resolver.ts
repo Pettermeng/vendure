@@ -1,6 +1,6 @@
 import { Inject} from '@nestjs/common';
 import { Resolver, Query, Mutation, Args} from '@nestjs/graphql';
-import { Permission, Allow, RequestContext, Ctx, Logger, TransactionalConnection,translateDeep, ListQueryBuilder, patchEntity, User, CustomerService, Customer, UserService, AuthenticationMethod, AuthService } from '@vendure/core';
+import { Permission, Allow, RequestContext, Ctx, Logger, TransactionalConnection,translateDeep, ListQueryBuilder, patchEntity, User, CustomerService, Customer, UserService, AuthenticationMethod, AuthService, NativeAuthenticationMethod } from '@vendure/core';
 import { loggerCtx, PLUGIN_INIT_OPTIONS } from '../constants';
 import { ExampleOptions } from '../example.plugin';
 import { Example } from '../entity/example.entity';
@@ -80,7 +80,6 @@ export class ExampleResolver {
     return {code, message};
   }
 
-
   //Create customer custom account
   @Mutation()
   async registerCustomerAccountCustom(
@@ -90,7 +89,7 @@ export class ExampleResolver {
 
       var UserPhone = input.phoneNumber;
       let sql = this.listQueryBuilder
-      .build(Customer);
+      .build(NativeAuthenticationMethod);
 
       //@Check Exist with user phone or email
       // sql.where({
@@ -101,7 +100,7 @@ export class ExampleResolver {
 
       //@Check Exist with user email
       sql.where({
-        emailAddress:input.emailAddress  
+        identifier:input.emailAddress  
       })
 
       const user_exist = await sql.getCount();

@@ -4,8 +4,8 @@ import { Request } from 'express';
 import { CreateUserDto } from './create-register.dto';
 import { CatFetcher } from './social-fetcher';
 
-@Controller('fb_connect')
-export class FacebookController {
+@Controller('google_connect')
+export class GoogleController {
 
   constructor(
     private catFetcher: CatFetcher,
@@ -21,24 +21,26 @@ export class FacebookController {
     var token = "";
     var code  = "401";
     var message  = "INVALID_CREDENTIALS_ERROR";
-    var fbId, name, fName, lName;
+    var googleId, email, name, givenName, picture;
+
     if(access_token != '') {
-      const result = await this.catFetcher.fbAccess(access_token);
+      const result = await this.catFetcher.GoogleAccess(access_token);
       const response = JSON.parse(JSON.stringify(result));
-      fbId  = response.id;
-      name  = response.name;
-      fName = response.first_name;
-      lName = response.last_name;
-  
+      googleId  = response.id;
+      email     = response.email;
+      name      = response.name;
+      givenName = response.given_name;
+      picture   = response.picture;
+
       //Query Check User Exist
-      const sql = this.listQueryBuilder.build(NativeAuthenticationMethod).where({identifier: fbId});
+      const sql = this.listQueryBuilder.build(NativeAuthenticationMethod).where({identifier: googleId});
       const userExist = await sql.getOne(); 
-  
-      const sqlUser = this.listQueryBuilder.build(User).where({identifier: fbId});
+
+      const sqlUser = this.listQueryBuilder.build(User).where({identifier: googleId});
       const userData = await sqlUser.getOne(); 
       
       if(userExist && userData){
-          var session = await this.authService.createAuthenticatedSessionForUser(ctx, userData,"");
+        var session = await this.authService.createAuthenticatedSessionForUser(ctx, userData,"");
         var ses = JSON.parse(JSON.stringify(session));
         token = ses.token ? ses.token : '';
         if(token != '') {
@@ -54,21 +56,21 @@ export class FacebookController {
       else {
         // Insert User 
         var userObj = new User;
-        userObj.identifier = fbId;
+        userObj.identifier = googleId;
         userObj.verified = true;
         const userdata = await this.connection.getRepository(ctx, User).save(userObj);
   
         //  Insert Customer
         var customerObj = new Customer;
-        customerObj.firstName    = fName;
-        customerObj.lastName     = lName;
-        customerObj.emailAddress = '';
+        customerObj.firstName    = givenName;
+        customerObj.lastName     = name;
+        customerObj.emailAddress = email;
         customerObj.user = userdata;
         await this.connection.getRepository(ctx, Customer).save(customerObj);
   
         // Insert Auth Method
         var authObj = new NativeAuthenticationMethod;
-        authObj.identifier = fbId;
+        authObj.identifier = googleId;
         await this.connection.getRepository(ctx, NativeAuthenticationMethod).save(authObj);
   
         var session = await this.authService.createAuthenticatedSessionForUser(ctx, userdata,"");
@@ -84,23 +86,13 @@ export class FacebookController {
         }
         return {code, message, token};
       } 
-    }   
+    }
     else {
       code = "400";
-      message = "Bad Request";
+      message = "Bad request";
       token = "";
       return {code, message, token};
-    }
-  }
-
-  @Get()
-  findAll(@Ctx() request: Request): string {
-    return 'This action returns all cats';
-  }
-
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return `This action returns a #${id} cat`;
+    }   
   }
 
 }

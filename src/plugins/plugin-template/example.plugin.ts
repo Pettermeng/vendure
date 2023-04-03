@@ -1,6 +1,6 @@
 import { Customer, PluginCommonModule, VendurePlugin } from "@vendure/core";
 import { shopSchema } from "./api/api-extensions";
-import { ExampleResolver } from "./api/example.resolver";
+import { ExampleResolver } from "./api/customer.resolver";
 
 import { PLUGIN_INIT_OPTIONS } from "./constants";
 import { Example } from "./entity/example.entity";
