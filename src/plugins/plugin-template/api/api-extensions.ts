@@ -82,6 +82,7 @@ export const shopSchema = gql`
     registerCustomerAccountCustom(input: registerCustomerInput!): ResponseRegister!  
     updateCustomerAccountCustom(input: updateCustomerInput!): ResponseUpdate!  
     customLogin(username: String!, password: String!): ResponseFormat!
+    changePasswordCustomerCustom(token: String!, password: String!): ResponseFormat!
   }
 
 `;

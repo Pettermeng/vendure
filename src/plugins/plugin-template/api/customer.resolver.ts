@@ -4,7 +4,7 @@ import { Permission, Allow, RequestContext, Ctx, Logger, TransactionalConnection
 import { loggerCtx, PLUGIN_INIT_OPTIONS } from '../constants';
 import { ExampleOptions } from '../example.plugin';
 import { Example } from '../entity/example.entity';
-import { MutationDeleteExampleArgs, MutationLoginArgs, MutationSubmitCustomerArgs, MutationSubmitExampleArgs, MutationUpdateCustomerArgs, MutationUpdateExampleArgs, SearchExampleArgs } from './generated-type';
+import { MutationChangePassworArgs, MutationDeleteExampleArgs, MutationLoginArgs, MutationSubmitCustomerArgs, MutationSubmitExampleArgs, MutationUpdateCustomerArgs, MutationUpdateExampleArgs, SearchExampleArgs } from './generated-type';
 import { RegisterCustomerInput } from './generated-type'; 
 
 @Resolver()
@@ -162,5 +162,24 @@ export class ExampleResolver {
       return {code, message, token};
   }
 
+  //Change Customer Password Custom
+  @Mutation()
+  async changePasswordCustomerCustom(
+    @Ctx() ctx: RequestContext,
+    @Args() { token, password }: MutationChangePassworArgs,
+  ){   
+    if(token != '' && password != '') {
+      const data_ = await this.customerService.requestPasswordReset(ctx, 'sok@gmail.com');
+      Logger.info(JSON.stringify(data_)+ 'aa');
+      // const code = 200;
+      // const message = "Password Changed";
+      // return {code, message};
+    }
+    else {
+      const code = 400;
+      const message = "Bad Request";
+      return {code, message}
+    }
+  }
 
 }

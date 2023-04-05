@@ -86,3 +86,9 @@ export declare type MutationLoginArgs = {
   username: any;
   password: Scalars['String'];
 };
+
+//Customer Update Password Custom
+export declare type MutationChangePassworArgs = {
+  token: Scalars['String'];
+  password: Scalars['String'];
+};
